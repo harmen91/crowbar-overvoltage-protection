@@ -22,7 +22,7 @@ Makita 21 V Battery → Buck Converter (5 V) → Crowbar OVP → Raspberry Pi
 
 If the buck converter fails and its output shoots up toward the raw battery voltage (21 V), the crowbar detects the overvoltage, instantly shorts the 5 V rail to ground through a MOSFET, and forces the series fuse to blow — cutting power before the Raspberry Pi is destroyed.
 
-The circuit also provides an **optional USB-C female output** for powering the Raspberry Pi 5 through its USB-C port, with CC pull-ups that advertise a 3 A source capability.
+The circuit also provides an **optional USB-C female output** for powering the Raspberry Pi through its USB-C port, with CC pull-ups that advertise a 3 A source capability. Which can now safely ignored in software by editing the boot.txt to take full advantage of the 5 A that this board supports. Make sure to use a proper 5 A rated usb cable or directly connect to Vbus pin with appropriate wire gauge.
 
 ---
 
