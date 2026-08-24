@@ -1,7 +1,6 @@
 # 5V 5A Crowbar Overvoltage Protection (OVP)
 ## TL431 + BC327 + IRLZ44N
 
-![Alt text](./controllers_brief.svg)
 <img src="./schematic.svg">
 
 
