@@ -190,6 +190,3 @@ This tells the Pi that a high-current supply is present and allows it to deliver
                               └─── Fuse blows in <10ms ───→ Pi saved
 ```
 
----
-
-*Document generated for the DIY Wireless Hi-Fi project.*
