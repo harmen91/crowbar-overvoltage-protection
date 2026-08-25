@@ -138,14 +138,6 @@ The following table shows circuit behavior across the full expected input voltag
 | **21.0 V** | 9.55 V | ON hard | ON hard | → 0 V (fuse blows) | **Catastrophic buck failure**; fuse blows instantly before Pi is damaged |
 
 
-| Input Voltage  | Reliability                                                     |
-| -------------- | --------------------------------------------------------------- |
-| **Up to 30 V** | Very high confidence. All components well within pulse ratings. |
-| **30–36 V**    | Functional, but approaching the TL431 cliff. Margin is thin.    |
-| **> 36 V**     | Crowbar may fail to fire. Do not rely on it.                    |
-
-
-
 ### Key Simulation Insights
 
 1. **No false triggers:** The trip point of 5.5 V gives comfortable headroom above the nominal 5 V rail while still protecting the Pi well before its absolute maximum rating (~5.5–6 V for the Pi 5 PMIC).
@@ -175,6 +167,15 @@ usb_max_current_enable=1
 ```
 
 This tells the Pi that a high-current supply is present and allows it to deliver up to 1.6 A to downstream USB devices.
+
+
+| Input Voltage  | Reliability                                                     |
+| -------------- | --------------------------------------------------------------- |
+| **Up to 30 V** | Very high confidence. All components well within pulse ratings. |
+| **30–36 V**    | Functional, but approaching the TL431 cliff. Margin is thin.    |
+| **> 36 V**     | Crowbar may fail to fire. Do not rely on it.                    |
+
+
 
 ### Layout Recommendations
 - Keep the **crowbar current loop** (Fuse → MOSFET drain → MOSFET source → GND) as short and wide as possible. Use thick traces or copper pours.
