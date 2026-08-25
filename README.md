@@ -75,6 +75,8 @@ The **IRLZ44N** is a logic-level N-channel MOSFET with very low Rds(on) (~22 mΩ
 
 When the BC327 turns on, it charges the MOSFET gate. The IRLZ44N slams fully on, creating a near-short across the 5 V rail. Current skyrockets, and the **5 A fast-blow fuse** opens within milliseconds.
 
+C1 (100 µF low-ESR) sits directly across the output terminals and absorbs any brief voltage spike during the nanoseconds the MOSFET is still transitioning through its linear region, before it fully shorts the rail.
+
 **Rgs (47 kΩ)** ensures the gate is held at ground when the driver is off, preventing false turn-on from noise or leakage.
 
 **Zener 12 V** clamps the gate-source voltage to a safe level. During a severe overvoltage event (e.g., 21 V), the BC327 would otherwise try to pull the gate to ~21 V, exceeding the MOSFET's Vgs(max) of ±16 V. The Zener limits Vgs to ~12 V, keeping the MOSFET safe while still fully enhancing it.
@@ -117,6 +119,7 @@ The 10 kΩ CC pull-ups tell the Raspberry Pi that this is a **3 A-capable source
 | U1 | Shunt Regulator | TL431 | — | Precision 2.5 V reference |
 | Q1 | PNP Transistor | BC327 | — | Driver stage; inverts and amplifies TL431 output |
 | Q2 | N-Channel MOSFET | IRLZ44N | — | Logic-level; low Rds(on); heatsink recommended |
+| C1 | Low-ESR Capacitor | 100µF | — | Absorbs brief voltage spike during MOSFET turn-on transient |
 | J1 | USB-C Receptacle | Female breakout | — | Optional output for USB-C power input to Pi |
 
 ---
