@@ -11,7 +11,7 @@
 
 ## 1. What This Circuit Does
 
-This is a **crowbar overvoltage protection (OVP)** circuit. Its sole purpose is to protect a 5 V load (specifically a Raspberry Pi) from a faulty upstream DC-DC buck converter.
+This is a **crowbar overvoltage protection (OVP)** circuit. Its sole purpose is to protect a 5 V load (specifically a Raspberry Pi) from a faulty upstream DC-DC buck converter or other faulty DC power source. It can safely protect your device from input voltages up to 30 V.
 
 In this build, the power chain is:
 
