@@ -119,7 +119,7 @@ The 10 kΩ CC pull-ups tell the Raspberry Pi that this is a **3 A-capable source
 | U1 | Shunt Regulator | TL431 | — | Precision 2.5 V reference |
 | Q1 | PNP Transistor | BC327 | — | Driver stage; inverts and amplifies TL431 output |
 | Q2 | N-Channel MOSFET | IRLZ44N | — | Logic-level; low Rds(on); heatsink recommended |
-| C1 | Low-ESR Capacitor | 100µF | — | Absorbs brief voltage spike during MOSFET turn-on transient |
+| C1 | Low-ESR Capacitor | 100µF 35 V | — | Absorbs brief voltage spike during MOSFET turn-on transient |
 | J1 | USB-C Receptacle | Female breakout | — | Optional output for USB-C power input to Pi |
 
 ---
