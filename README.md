@@ -2,7 +2,7 @@
 ## TL431 + BC327 + IRLZ44N
 
 <img src="./schematic.svg">
-
+.
 
 **Designed for:** Raspberry Pi 4 & 5 (and any other 5 V load)  
 **Author:** H. Smit  
