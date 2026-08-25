@@ -1,7 +1,7 @@
 # 5V 5A Crowbar Overvoltage Protection (OVP)
 ## TL431 + BC327 + IRLZ44N
 
-<img src="./schematic2.svg">
+<img src="./schematic.svg">
 
 **Designed for:** Raspberry Pi 4 & 5 (and any other 5 V load)  
 **Author:** H. Smit  
