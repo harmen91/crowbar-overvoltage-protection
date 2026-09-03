@@ -5,7 +5,9 @@
 
 **Designed for:** Raspberry Pi 4 & 5 (and any other 5 V load)  
 **Author:** H. Smit  
-**Project:** [DIY Wireless Hi-Fi](https://github.com/harmen91/DIY-wireless-hifi/)
+**Projects:** 
+    - [DIY Wireless Hi-Fi](https://github.com/harmen91/DIY-wireless-hifi/)
+    - [Open Speaker Multi Connect](https://github.com/harmen91/open-multi-speaker-connect/)
 
 ---
 
