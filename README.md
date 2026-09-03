@@ -240,8 +240,8 @@ The **5.6 V output Zeners** and **C1** are insurance. They catch the nanosecond 
 
 ## 8. Finished PCB
 
-<img scr="./PCB/IMG_0395.jpg">
-<img scr="./PCB/IMG_0396.jpg">
-<img scr="./PCB/IMG_0397.jpg">
+<img scr="/PCB/IMG_0395.jpg">
+<img scr="/PCB/IMG_0396.jpg">
+<img scr="/PCB/IMG_0397.jpg">
 
 *Part of the [DIY Wireless Hi-Fi](https://github.com/harmen91/DIY-wireless-hifi/) project.*
