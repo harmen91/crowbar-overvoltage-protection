@@ -244,4 +244,7 @@ The **5.6 V output Zeners** and **C1** are insurance. They catch the nanosecond 
 <img src="PCB/IMG_0396.jpg">
 <img src="PCB/IMG_0397.jpg">
 
+Notice the extra thick copper lead for the crowbar current loop between the MOSFET Cathode and Anode, FUSE and Positive and GND. This will make sure that the rest of the circuit is protected from the high amperage pull of the MOSFET before the fuse is blown.
+I know its not pretty. But it works!
+
 *Part of the [DIY Wireless Hi-Fi](https://github.com/harmen91/DIY-wireless-hifi/) project.*
