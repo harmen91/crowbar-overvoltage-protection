@@ -172,7 +172,7 @@ The following table shows circuit behavior across the full expected input voltag
 
 ### Before First Power-On
 1. **Verify the buck converter output** with a multimeter before connecting this board. It should read 5.0 V ± 0.1 V.
-2. **Test the crowbar with the Makita battery only.** Do **not** test with a current-limited lab supply or a buck converter — these sources cannot deliver the 25–50 A needed to blow a fast fuse in milliseconds. The MOSFET will cook in the linear region and the fuse will not blow.
+2. **Test the crowbar with high current source only.** Do **not** test with a current-limited lab supply or a buck converter — these sources cannot deliver the 25–50 A needed to blow a fast fuse in milliseconds. The MOSFET will cook in the linear region and the fuse will not blow. In my case I connected it straight to a Makita 21V battery with proper wires to test and blow some fuses.
 3. **Verify the fuse is fast-blow.** A slow-blow or PTC fuse will allow the MOSFET to overheat in the linear region.
 
 ### Raspberry Pi Configuration
