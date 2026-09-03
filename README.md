@@ -21,7 +21,7 @@ Makita 21 V Battery → Buck Converter (5 V) → Crowbar OVP → Raspberry Pi
 
 If the buck converter fails and its output shoots up toward the raw battery voltage (21 V), the crowbar detects the overvoltage, instantly shorts the 5 V rail to ground through a MOSFET, and forces the series fuse to blow — cutting power before the Raspberry Pi is destroyed.
 
-The circuit also provides an **optional USB-C female output** for powering the Raspberry Pi through its USB-C port, with CC pull-ups that advertise a 3 A source capability. Which can now safely be ignored in software by editing /boot/config.txt to take full advantage of the 5 A that this board supports. Make sure to use a proper 5 A rated usb cable or directly connect to Vbus pin with appropriate wire gauge.
+The circuit also provides an **optional USB-C female output** for powering the Raspberry Pi through its USB-C port, with CC pull-ups that advertise a 3 A source capability. Which can now safely be ignored in software by editing `/boot/config.txt` to take full advantage of the 5 A that this board supports. Make sure to use a proper 5 A rated USB cable or directly connect to the VBUS pin with appropriate wire gauge.
 
 ---
 
@@ -71,17 +71,25 @@ The **IRLZ44N** is a logic-level N-channel MOSFET with very low Rds(on) (~22 mΩ
 
 - **Drain** is connected to the fused 5 V rail.
 - **Source** is connected to ground.
-- **Gate** is driven by the BC327 collector through **Rgate (330 Ω)**.
+- **Gate** is driven by the BC327 collector through **Rgate (47 Ω)**.
 
 When the BC327 turns on, it charges the MOSFET gate. The IRLZ44N slams fully on, creating a near-short across the 5 V rail. Current skyrockets, and the **5 A fast-blow fuse** opens within milliseconds.
 
-C1 (100 µF low-ESR) sits directly across the output terminals and absorbs any brief voltage spike during the nanoseconds the MOSFET is still transitioning through its linear region, before it fully shorts the rail.
+**C1 (100 µF low-ESR, 35 V)** sits directly across the output terminals and absorbs any brief voltage spike during the nanoseconds the MOSFET is still transitioning through its linear region, before it fully shorts the rail.
 
 **Rgs (47 kΩ)** ensures the gate is held at ground when the driver is off, preventing false turn-on from noise or leakage.
 
-**Zener 12 V** clamps the gate-source voltage to a safe level. During a severe overvoltage event (e.g., 21 V), the BC327 would otherwise try to pull the gate to ~21 V, exceeding the MOSFET's Vgs(max) of ±16 V. The Zener limits Vgs to ~12 V, keeping the MOSFET safe while still fully enhancing it.
+**Zener_1 (12 V)** clamps the gate-source voltage to a safe level. During a severe overvoltage event (e.g., 21 V), the BC327 would otherwise try to pull the gate to ~21 V, exceeding the MOSFET's Vgs(max) of ±16 V. The Zener limits Vgs to ~12 V, keeping the MOSFET safe while still fully enhancing it.
 
-#### Stage 4 — USB-C Output (Optional)
+#### Stage 4 — Output Protection (Zener_2 & Zener_3)
+
+Two **5.6 V Zener diodes** (Zener_2 and Zener_3) are placed in parallel directly across the output header and USB-C VBUS pins.
+
+These act as a **last-resort voltage clamp** during the brief microsecond gap between "TL431 trips" and "MOSFET fully shorts the rail." If the MOSFET turn-on is momentarily slow, these Zeners conduct and clamp the output to ~5.6 V, preventing any damaging voltage spike from reaching the Raspberry Pi.
+
+They are sacrificial protection — under normal operation they do not conduct. During a healthy crowbar event the MOSFET collapses the rail so fast that they remain dark. They only wake up if something delays the MOSFET.
+
+#### Stage 5 — USB-C Output (Optional)
 
 A **female USB-C receptacle (J1)** provides an alternative to direct GPIO header power.
 
@@ -111,16 +119,19 @@ The 10 kΩ CC pull-ups tell the Raspberry Pi that this is a **3 A-capable source
 | R1 | Resistor | 12 kΩ | 1/4 W | Upper divider resistor |
 | R2 | Resistor | 10 kΩ | 1/4 W | Lower divider resistor |
 | Rb | Resistor | 2.2 kΩ | 1/4 W | Base current limiter for BC327 |
-| Rgate | Resistor | 330 Ω | **1/2 W** | Gate charge current limiter; dissipates ~245 mW during fault |
+| Rgate | Resistor | **47 Ω** | **1/2 W** | Gate charge current limiter; fast turn-on essential |
 | Rgs | Resistor | 47 kΩ | 1/4 W | Gate pull-down; prevents false turn-on |
 | R3 | Resistor | 10 kΩ | 1/4 W | CC1 pull-up for USB-C detection |
 | R4 | Resistor | 10 kΩ | 1/4 W | CC2 pull-up for USB-C detection |
-| D1 | Zener Diode | 12 V | **1/2 W** | Clamps MOSFET Vgs to safe level |
+| Zener_1 | Zener Diode | 12 V | **1/2 W** | Clamps MOSFET Vgs to safe level |
+| Zener_2 | Zener Diode | 5.6 V | **1/2 W** | Output clamp; catches brief turn-on spike |
+| Zener_3 | Zener Diode | 5.6 V | **1/2 W** | Output clamp; parallel with Zener_2 for margin |
 | U1 | Shunt Regulator | TL431 | — | Precision 2.5 V reference |
 | Q1 | PNP Transistor | BC327 | — | Driver stage; inverts and amplifies TL431 output |
 | Q2 | N-Channel MOSFET | IRLZ44N | — | Logic-level; low Rds(on); heatsink recommended |
-| C1 | Low-ESR Capacitor | 100µF 35 V | — | Absorbs brief voltage spike during MOSFET turn-on transient |
+| C1 | Low-ESR Capacitor | 100 µF 35 V | — | Absorbs brief voltage spike during MOSFET turn-on transient |
 | J1 | USB-C Receptacle | Female breakout | — | Optional output for USB-C power input to Pi |
+| — | Output Header | 2-pin screw terminal | — | +VBUS 5V / GND for direct GPIO or wire connection |
 
 ---
 
@@ -139,26 +150,25 @@ The following table shows circuit behavior across the full expected input voltag
 | **12.0 V** | 5.45 V | ON hard | ON hard | → 0 V (fuse blows) | All fault-mode resistors within rated pulse power |
 | **21.0 V** | 9.55 V | ON hard | ON hard | → 0 V (fuse blows) | **Catastrophic buck failure**; fuse blows instantly before Pi is damaged |
 
-
 ### Key Simulation Insights
 
 1. **No false triggers:** The trip point of 5.5 V gives comfortable headroom above the nominal 5 V rail while still protecting the Pi well before its absolute maximum rating (~5.5–6 V for the Pi 5 PMIC).
 
-2. **Fast action:** The BC327 + IRLZ44N combination turns on in microseconds. The fuse is the slowest element, but a fast-blow 5 A fuse opens in under 10 ms under a hard short from a Makita battery.
+2. **Fast action:** The BC327 + IRLZ44N combination turns on in microseconds thanks to the 47 Ω Rgate. The fuse is the slowest element, but a fast-blow 5 A fuse opens in under 10 ms under a hard short from a Makita battery.
 
 3. **MOSFET survival:** The 12 V Zener ensures Vgs never exceeds a safe value, even with 21 V on the rail. The IRLZ44N's pulse current rating (~160 A) easily handles the transient short-circuit current.
 
-4. **Resistor survival:** Rbias and Rgate are the only components that see significant power during the fault. At 1/2 W each, they have ~2× margin over the calculated ~245 mW fault dissipation.
+4. **Output protection:** The dual 5.6 V Zeners across the output catch any residual voltage spike during the nanosecond MOSFET transition. Under normal crowbar operation the MOSFET is fast enough that they do not conduct.
+
+5. **Resistor survival:** Rbias and Rgate are the only components that see significant power during the fault. At 1/2 W each, they have ~2× margin over the calculated ~245 mW fault dissipation.
 
 ---
-
-
 
 ## 5. Usage & Safety Notes
 
 ### Before First Power-On
 1. **Verify the buck converter output** with a multimeter before connecting this board. It should read 5.0 V ± 0.1 V.
-2. **Test the crowbar** by slowly increasing the input voltage with a current-limited lab supply. The crowbar should fire at ~5.5 V and the supply should current-limit.
+2. **Test the crowbar with the Makita battery only.** Do **not** test with a current-limited lab supply or a buck converter — these sources cannot deliver the 25–50 A needed to blow a fast fuse in milliseconds. The MOSFET will cook in the linear region and the fuse will not blow.
 3. **Verify the fuse is fast-blow.** A slow-blow or PTC fuse will allow the MOSFET to overheat in the linear region.
 
 ### Raspberry Pi Configuration
@@ -170,20 +180,21 @@ usb_max_current_enable=1
 
 This tells the Pi that a high-current supply is present and allows it to deliver up to 1.6 A to downstream USB devices.
 
+### Safe Operating Envelope
 
-| Input Voltage  | Reliability                                                     |
-| -------------- | --------------------------------------------------------------- |
+| Input Voltage | Reliability |
+|---|---|
 | **Up to 30 V** | Very high confidence. All components well within pulse ratings. |
-| **30–36 V**    | Functional, but approaching the TL431 cliff. Margin is thin.    |
-| **> 36 V**     | Crowbar may fail to fire. Do not rely on it.                    |
+| **30–36 V** | Functional, but approaching the TL431 cliff. Margin is thin. |
+| **> 36 V** | Crowbar may fail to fire. Do not rely on it. |
 
-
-
-### Layout Recommendations
-- Keep the **crowbar current loop** (Fuse → MOSFET drain → MOSFET source → GND) as short and wide as possible. Use thick traces or copper pours.
+### Layout & Wiring Recommendations
+- Keep the **crowbar current loop** (Fuse → MOSFET drain → MOSFET source → GND) as short and wide as possible. Use **thick traces or copper pours**.
+- Use **14 AWG wire** (minimum 16 AWG) for the battery → fuse → drain → source → GND path. If the wires are thinner than the fuse element, the wires will melt instead of the fuse.
 - Place the **fuse** close to the input connector.
 - The **MOSFET** should have a heatsink. While the fault event is brief, bench testing or a stuck buck converter could cause sustained dissipation.
-- The **Zener** should be placed physically close to the MOSFET gate with short leads.
+- The **12 V gate Zener** should be placed physically close to the MOSFET gate with short leads.
+- The **output 5.6 V Zeners** and **C1** should be soldered directly across the output terminals, as close to the header as possible.
 
 ### What This Circuit Does NOT Do
 - It does **not** regulate voltage.
@@ -193,7 +204,22 @@ This tells the Pi that a high-current supply is present and allows it to deliver
 
 ---
 
-## 6. Schematic Summary
+## 6. What Happens During a Fault
+
+When the buck converter fails and the rail starts climbing past 5.5 V:
+
+1. **TL431 trips** (~1 µs) — REF crosses 2.5 V, cathode pulls low.
+2. **BC327 turns on** (~1–5 µs) — PNP sources current into the MOSFET gate.
+3. **IRLZ44N slams on** (~5 µs) — Gate charges through 47 Ω, MOSFET enters full conduction.
+4. **Rail collapses** (~5–50 µs) — Output voltage drops to ~1–3 V as the MOSFET shorts the rail.
+5. **Fuse blows** (~1–3 ms) — The 5 A fast-blow fuse vaporizes under 100+ A from the Makita battery.
+6. **Power is cut** — The Pi never sees more than a few microseconds of overvoltage.
+
+The **5.6 V output Zeners** and **C1** are insurance. They catch the nanosecond transition if the MOSFET is momentarily slow. Under healthy operation they do not conduct.
+
+---
+
+## 7. Schematic Summary
 
 ```
 +21V Battery → Buck (5V) → [Fuse 5A] → [Crowbar OVP] → [USB-C Out / Header Out] → Raspberry Pi
@@ -207,3 +233,6 @@ This tells the Pi that a high-current supply is present and allows it to deliver
                               └─── Fuse blows in <10ms ───→ Pi saved
 ```
 
+---
+
+*Part of the [DIY Wireless Hi-Fi](https://github.com/harmen91/DIY-wireless-hifi/) project.*
