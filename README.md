@@ -123,6 +123,8 @@ The 10 kΩ CC pull-ups tell the Raspberry Pi that this is a **3 A-capable source
 | Rgs | Resistor | 47 kΩ | 1/4 W | Gate pull-down; prevents false turn-on |
 | R3 | Resistor | 10 kΩ | 1/4 W | CC1 pull-up for USB-C detection |
 | R4 | Resistor | 10 kΩ | 1/4 W | CC2 pull-up for USB-C detection |
+| R5 | Resistor | 1 kΩ | 1/4 W | Resistor for LED |
+| D1 | LED | — | — | Power indicator |
 | Zener_1 | Zener Diode | 12 V | **1/2 W** | Clamps MOSFET Vgs to safe level |
 | Zener_2 | Zener Diode | 5.6 V | **1/2 W** | Output clamp; catches brief turn-on spike |
 | Zener_3 | Zener Diode | 5.6 V | **1/2 W** | Output clamp; parallel with Zener_2 for margin |
