@@ -248,3 +248,4 @@ Notice the extra thick copper lead for the crowbar current loop between the MOSF
 I know its not pretty. But it works!
 
 *Part of the [DIY Wireless Hi-Fi](https://github.com/harmen91/DIY-wireless-hifi/) project.*
+*And the [Open Speaker Multi Connect](https://github.com/harmen91/open-multi-speaker-connect) project.*
